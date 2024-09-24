@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import javax.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,12 @@ public abstract class BaseTimeEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
+    @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
