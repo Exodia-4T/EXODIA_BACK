@@ -33,3 +33,8 @@ janus:
 
 nginx:
   proxy-port: 8080
+
+google:
+  credentials:
+    file:
+      path: credentials.json
