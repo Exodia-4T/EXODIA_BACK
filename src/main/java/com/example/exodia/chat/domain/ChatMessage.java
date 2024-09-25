@@ -26,7 +26,11 @@ public class ChatMessage extends BaseTimeEntity {
     //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name = "chat_user_id", nullable = false)
-    private ChatUser chatUser; // 누가 보냈는지 chatroom도 알 수 있다.
+    private ChatUser chatUser; // 누가 보냈는지
+
+    @ManyToOne
+    @JoinColumn(name = "chat_room_id", nullable = false)
+    private ChatRoom chatRoom;
 
     private String message;
 
