@@ -91,6 +91,8 @@ dependencies {
 	// Kurento Client
 	implementation 'org.kurento:kurento-client:6.16.0'
 
+	//shedLock
+	implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.8.0")
 }
 
 
