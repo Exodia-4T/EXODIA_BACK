@@ -38,3 +38,4 @@ google:
   credentials:
     file:
       path: credentials.json
+

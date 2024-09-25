@@ -53,13 +53,12 @@ public class BoardService {
     // 게시물 생성
     @Transactional
     public Board createBoard(BoardSaveReqDto dto, List<MultipartFile> files) {
-        // 사번을 이용해 User 조회
+
         User user = userRepository.findByUserNum(dto.getUserNum())
                 .orElseThrow(() -> new IllegalArgumentException("해당 사번을 가진 유저가 없습니다."));
 
         Category category = dto.getCategory();
         System.out.println(category);
-        // 2. Board 엔티티 생성 및 User 설정 후 저장
         Board board = dto.toEntity(user,category);
         System.out.println(board.getCategory());
         board = boardRepository.save(board);
@@ -76,19 +75,17 @@ public class BoardService {
                 String s3FilePath = s3FilePaths.get(i);
 
                 BoardFile boardFile = BoardFile.builder()
-                        .board(board)  // 저장된 Board 엔티티와 연관
+                        .board(board)
                         .filePath(s3FilePath)
                         .fileType(file.getContentType())
                         .fileName(file.getOriginalFilename())
                         .fileSize(file.getSize())
                         .build();
 
-                // BoardFile 저장
                 boardFileRepository.save(boardFile);
             }
         }
 
-        // 4. 최종적으로 저장된 Board 엔티티 반환
         return board;
     }
 
@@ -111,7 +108,6 @@ public class BoardService {
                                     searchQuery, searchQuery, DelYN.N, pageable)
                             .map(Board::listFromEntity);
                 case "user_num":
-                    // 사번이 12자리인지 확인하는 로직
                     if (searchQuery.length() != 12) {
                         throw new IllegalArgumentException("사번은 12자리 문자열이어야 합니다.");
                     }
@@ -121,10 +117,10 @@ public class BoardService {
                     return boardRepository.findByUser_NameContainingIgnoreCase(searchQuery, DelYN.N, pageable)
                             .map(Board::listFromEntity);
                 default:
-                    return boardRepository.findAllWithPinned(pageable).map(Board::listFromEntity);  // 상단 고정 적용된 쿼리
+                    return boardRepository.findAllWithPinned(pageable).map(Board::listFromEntity);
             }
         } else {
-            return boardRepository.findAllWithPinned(pageable).map(Board::listFromEntity);  // 상단 고정 적용된 쿼리
+            return boardRepository.findAllWithPinned(pageable).map(Board::listFromEntity);
         }
     }
 
@@ -188,11 +184,9 @@ public class BoardService {
 
         List<String> s3FilePaths = null;
 
-        // Step 3: 새로운 파일이 있는 경우 처리
         if (files != null && !files.isEmpty()) {
             s3FilePaths = uploadAwsFileService.uploadMultipleFilesAndReturnPaths(files);
 
-            // 새로운 파일 저장
             for (int i = 0; i < files.size(); i++) {
                 MultipartFile file = files.get(i);
                 String s3FilePath = s3FilePaths.get(i);
@@ -233,9 +227,6 @@ public class BoardService {
             throw new IllegalArgumentException("공지사항 게시물만 상단 고정이 가능합니다.");
         }
 
-        // 로그 추가
-        System.out.println("현재 isPinned 상태: " + board.getIsPinned());
-        System.out.println("새로운 isPinned 상태: " + isPinned);
 
         board.setIsPinned(isPinned);
         boardRepository.save(board);
