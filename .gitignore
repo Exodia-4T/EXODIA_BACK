@@ -37,11 +37,11 @@ out/
 .vscode/
 
 
-
+resources/credentials.json
  ###yml ###
-# **/application.yml
+ **/application.yml
 src/main/resources/application.yml
-# application*.yml
-# application.yml
+ application*.yml
+ application.yml
 .idea
 /src/main/resources/credentials.json

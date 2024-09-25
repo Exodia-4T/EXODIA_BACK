@@ -23,19 +23,16 @@ public class ChatFile extends BaseTimeEntity {
 
 //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @ManyToOne
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom; // 어느 채팅방인지
-
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @ManyToOne
     @JoinColumn(name = "chat_user_id", nullable = false)
-    private ChatUser chatUser; // 그 방의 누가 보냈는지 (이 안에 채팅방번호가 있는데 채팅방은 없어도 되지 않을까..)
+    private ChatUser chatUser; // 누가 보냈는지  // 채팅룸 정보도 함께 갖는다.
 
     @OneToOne
     @JoinColumn(name = "chat_message_id", nullable = false)
     private ChatMessage chatMessage; // 파일을 보내는 순간 먼저 생겨서 참조되어야한다. 메세지 내용에 채팅파일id를 넣어야 할듯..?(메세지 순서를 확인하기 위해서)
 
-    private String chatFileName;
+    private String chatFileName; // 파일이름
 
-    private String chatFileUrl;
+    private String chatFileUrl; // 파일 업로드 url
+
+    private String chatFileDir; // s3 파일 경로 // 이부분은 좀 더 고려
 }
