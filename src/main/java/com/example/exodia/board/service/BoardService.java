@@ -7,28 +7,24 @@ import com.example.exodia.board.dto.BoardDetailDto;
 import com.example.exodia.board.dto.BoardListResDto;
 import com.example.exodia.board.dto.BoardSaveReqDto;
 import com.example.exodia.board.dto.BoardUpdateDto;
-import com.example.exodia.board.repository.BoardRepository;
 import com.example.exodia.board.repository.BoardFileRepository;
+import com.example.exodia.board.repository.BoardRepository;
 import com.example.exodia.comment.domain.Comment;
 import com.example.exodia.comment.dto.CommentResDto;
 import com.example.exodia.comment.repository.CommentRepository;
 import com.example.exodia.common.domain.DelYN;
 import com.example.exodia.common.service.UploadAwsFileService;
 import com.example.exodia.user.domain.User;
-
-import com.example.exodia.user.dto.UserDetailDto;
 import com.example.exodia.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,46 +49,63 @@ public class BoardService {
     // 게시물 생성
     @Transactional
     public Board createBoard(BoardSaveReqDto dto, List<MultipartFile> files) {
-        // 사번을 이용해 User 조회
-        User user = userRepository.findByUserNum(dto.getUserNum())
-                .orElseThrow(() -> new IllegalArgumentException("해당 사번을 가진 유저가 없습니다."));
-
+        User user = null;
+        boolean isAnonymous = dto.isAnonymous();
         Category category = dto.getCategory();
-        System.out.println(category);
-        // 2. Board 엔티티 생성 및 User 설정 후 저장
-        Board board = dto.toEntity(user,category);
-        System.out.println(board.getCategory());
-        board = boardRepository.save(board);
-        System.out.println(board.getCategory());
 
-        // 3. 파일이 있는 경우 파일 처리
+        // 익명이 아닌 경우에만 User 정보를 조회
+        if (!isAnonymous) {
+            user = userRepository.findByUserNum(dto.getUserNum())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 사번을 가진 유저가 없습니다."));
+
+            // 카테고리가 NOTICE 또는 FAMILY_EVENT일 때, 부서가 인사팀인지 확인
+            if ((category == Category.NOTICE || category == Category.FAMILY_EVENT) &&
+                    !user.getDepartment().getName().equals("인사팀")) {
+                throw new SecurityException("공지사항 또는 경조사 게시물은 인사팀만 작성할 수 있습니다.");
+            }
+        }
+        System.out.println(user.getDepartment().getName());
+
+        // BoardSaveReqDto에서 엔티티 변환
+        Board board = dto.toEntity(user, category);
+        board = boardRepository.save(board);
+
+        // 파일이 있는 경우 파일 처리
         if (files != null && !files.isEmpty()) {
-            // S3 파일 업로드 후 파일 경로 리스트 반환
+            // S3 파일 업로드 후 파일 경로 및 Presigned URL 반환
             List<String> s3FilePaths = uploadAwsFileService.uploadMultipleFilesAndReturnPaths(files);
+
+            // 파일 이름 리스트 추출
+            List<String> fileNames = files.stream()
+                    .map(MultipartFile::getOriginalFilename)
+                    .collect(Collectors.toList());
+
+            List<String> presignedUrls = uploadAwsFileService.generatePresignedUrls(fileNames); // Presigned URL 생성
 
             // BoardFile 엔티티를 생성하여 저장
             for (int i = 0; i < files.size(); i++) {
                 MultipartFile file = files.get(i);
                 String s3FilePath = s3FilePaths.get(i);
+                String fileDownloadUrl = presignedUrls.get(i);  // 다운로드 URL
 
-                BoardFile boardFile = BoardFile.builder()
-                        .board(board)  // 저장된 Board 엔티티와 연관
-                        .filePath(s3FilePath)
-                        .fileType(file.getContentType())
-                        .fileName(file.getOriginalFilename())
-                        .fileSize(file.getSize())
-                        .build();
+                // BoardFile 엔티티 생성 및 저장
+                BoardFile boardFile = BoardFile.createBoardFile(
+                        board,
+                        s3FilePath,
+                        file.getContentType(),
+                        file.getOriginalFilename(),
+                        file.getSize(),
+                        fileDownloadUrl // Presigned URL을 다운로드 URL로 추가
+                );
 
                 // BoardFile 저장
                 boardFileRepository.save(boardFile);
             }
         }
 
-        // 4. 최종적으로 저장된 Board 엔티티 반환
+        // 최종적으로 저장된 Board 엔티티 반환
         return board;
     }
-
-
 
 
 
@@ -161,14 +174,11 @@ public class BoardService {
 
     @Transactional
     public void updateBoard(Long id, BoardUpdateDto dto, List<MultipartFile> files) {
-        // 현재 사용자 정보 로그 출력
         String userNum = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("현재 사용자 번호: " + userNum);
 
         // 게시물 조회
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        System.out.println("게시물 조회 완료. 게시물 제목: " + board.getTitle());
 
         // 사용자 권한 확인
         if (!board.getUser().getUserNum().equals(userNum)) {
@@ -179,6 +189,13 @@ public class BoardService {
         User user = userRepository.findByUserNum(board.getUser().getUserNum())
                 .orElseThrow(() -> new IllegalArgumentException("해당 사번을 가진 유저가 없습니다."));
         Category category = dto.getCategory();
+
+        // 카테고리가 NOTICE 또는 FAMILY_EVENT일 때, 부서가 인사팀인지 확인
+        if ((category == Category.NOTICE || category == Category.FAMILY_EVENT) &&
+                !user.getDepartment().getName().equals("인사팀")) {
+            throw new SecurityException("공지사항 또는 가족 행사 게시물은 인사팀만 작성할 수 있습니다.");
+        }
+
         board = dto.updateFromEntity(category,user);
         System.out.println(board.getCategory());
         board = boardRepository.save(board);
@@ -187,7 +204,6 @@ public class BoardService {
         boardFileRepository.deleteByBoardId(board.getId());
 
         List<String> s3FilePaths = null;
-
         // Step 3: 새로운 파일이 있는 경우 처리
         if (files != null && !files.isEmpty()) {
             s3FilePaths = uploadAwsFileService.uploadMultipleFilesAndReturnPaths(files);
@@ -233,10 +249,6 @@ public class BoardService {
             throw new IllegalArgumentException("공지사항 게시물만 상단 고정이 가능합니다.");
         }
 
-        // 로그 추가
-        System.out.println("현재 isPinned 상태: " + board.getIsPinned());
-        System.out.println("새로운 isPinned 상태: " + isPinned);
-
         board.setIsPinned(isPinned);
         boardRepository.save(board);
     }
@@ -247,6 +259,15 @@ public class BoardService {
     public void deleteBoard(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
+
+        // 게시물의 카테고리가 NOTICE 또는 FAMILY_EVENT일 때, 부서가 인사팀인지 확인
+        if ((board.getCategory() == Category.NOTICE || board.getCategory() == Category.FAMILY_EVENT) &&
+                !board.getUser().getDepartment().getName().equals("인사팀")) {
+            throw new SecurityException("공지사항 또는 가족 행사 게시물은 인사팀만 삭제할 수 있습니다.");
+        }
+
+        // 게시물 삭제
         boardRepository.delete(board);
     }
+
 }

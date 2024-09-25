@@ -2,7 +2,6 @@ package com.example.exodia.board.domain;
 
 import com.example.exodia.board.dto.BoardDetailDto;
 import com.example.exodia.board.dto.BoardListResDto;
-import com.example.exodia.board.dto.BoardUpdateDto;
 import com.example.exodia.comment.domain.Comment;
 import com.example.exodia.common.domain.BaseTimeEntity;
 import com.example.exodia.common.domain.DelYN;
@@ -41,55 +40,54 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = false)
     private int hits = 0;
 
+    // 작성자 정보 (익명 게시글의 경우 null)
     @ManyToOne
-    @JoinColumn(name = "user_num", nullable = false)
+    @JoinColumn(name = "user_num", nullable = true)  // 익명 게시글일 경우 null을 허용
     private User user;
+
+    // 익명 여부 필드 추가
+    @Column(name = "is_anonymous", nullable = false)
+    private Boolean isAnonymous = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "del_yn", nullable = false)
-    private DelYN delYn = DelYN.N;  // 기본값을 N으로 설정
+    private DelYN delYn = DelYN.N;
 
-    // 파일 경로 추가 (이미지뿐만 아니라 여러 파일 허용)
     @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<BoardFile> files = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    // 상단 고정 여부 추가
     @Column(name = "is_pinned", nullable = false)
     private Boolean isPinned = false;
 
-    // 게시물 리스트 DTO로 변환
+    // 게시물 목록 DTO로 변환 (익명 여부에 따라 처리)
     public BoardListResDto listFromEntity() {
         return BoardListResDto.builder()
                 .id(this.id)
                 .title(this.title)
                 .category(category)
                 .hits(this.hits)
-                .user_num(this.user.getUserNum())
+                .user_num(this.isAnonymous ? "익명" : this.user.getUserNum())
                 .createdAt(this.getCreatedAt())
                 .updatedAt(this.getUpdatedAt())
                 .isPinned(this.isPinned)
                 .build();
     }
 
-    // 게시물 상세 DTO로 변환
+    // 게시물 상세 DTO로 변환 (익명 여부에 따라 처리)
     public BoardDetailDto detailFromEntity(List<String> filePaths) {
         return BoardDetailDto.builder()
                 .id(this.getId())
                 .title(this.getTitle())
                 .content(this.getContent())
-                .user_num(this.user.getUserNum())
+                .user_num(this.isAnonymous ? "익명" : this.user.getUserNum())
                 .category(category)
                 .createdAt(this.getCreatedAt())
                 .updatedAt(this.getUpdatedAt())
                 .filePaths(filePaths)
                 .build();
     }
-
-
-
 }

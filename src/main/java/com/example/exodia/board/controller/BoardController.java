@@ -2,8 +2,8 @@ package com.example.exodia.board.controller;
 
 import com.example.exodia.board.dto.*;
 import com.example.exodia.board.service.BoardService;
-import com.example.exodia.common.dto.CommonResDto;
 import com.example.exodia.common.dto.CommonErrorDto;
+import com.example.exodia.common.dto.CommonResDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/board")
@@ -103,8 +102,6 @@ public class BoardController {
     // 게시물 상단 고정 기능 추가
     @PostMapping("/pin/{id}")
     public ResponseEntity<?> 게시물상단고정(@PathVariable Long id, @RequestBody BoardPinReqDto requestDto) {
-        System.out.println("Request DTO: " + requestDto); // 전체 DTO 출력
-        System.out.println("Request isPinned 값: " + requestDto.getIsPinned());
 
         try {
             boardService.pinBoard(id, requestDto.getUserId(), requestDto.getIsPinned());

@@ -1,10 +1,6 @@
 package com.example.exodia.board.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -25,7 +21,7 @@ public class BoardFile {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2083)
     private String filePath; // 파일 경로
 
     @Column(nullable = false)
@@ -37,7 +33,18 @@ public class BoardFile {
     @Column(nullable = false)
     private Long fileSize; // 파일 크기
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 2083)
     private String fileDownloadUrl; // 다운로드 URL
-}
 
+    // 정적 생성 메서드 (빌더를 활용)
+    public static BoardFile createBoardFile(Board board, String filePath, String fileType, String fileName, Long fileSize, String fileDownloadUrl) {
+        return BoardFile.builder()
+                .board(board)
+                .filePath(filePath)
+                .fileType(fileType)
+                .fileName(fileName)
+                .fileSize(fileSize)
+                .fileDownloadUrl(fileDownloadUrl)
+                .build();
+    }
+}
