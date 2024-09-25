@@ -28,7 +28,7 @@ public class UploadAwsFileService {
     private long expirationTime; // Presigned URL 만료 시간 (초 단위)
 
     private final S3Client s3Client;
-    private final S3Presigner s3Presigner; // Pre-signed URL 생성을 위한 Presigner
+    private final S3Presigner s3Presigner;
     private final CommonMethod commonMethod;
 
     @Autowired
@@ -90,7 +90,7 @@ public class UploadAwsFileService {
 
         for (String fileName : fileNames) {
             GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofSeconds(expirationTime))  // URL 만료 시간 설정
+                    .signatureDuration(Duration.ofSeconds(expirationTime))
                     .getObjectRequest(b -> b.bucket(bucket).key(fileName))
                     .build();
 

@@ -22,21 +22,21 @@ public class BoardFile {
     private Board board;
 
     @Column(nullable = false, length = 2083)
-    private String filePath; // 파일 경로
+    private String filePath;
 
     @Column(nullable = false)
-    private String fileType; // MIME 타입
+    private String fileType;
 
     @Column(nullable = false)
-    private String fileName; // 파일 이름
+    private String fileName;
 
     @Column(nullable = false)
-    private Long fileSize; // 파일 크기
+    private Long fileSize;
 
     @Column(nullable = true, length = 2083)
-    private String fileDownloadUrl; // 다운로드 URL
+    private String fileDownloadUrl;
 
-    // 정적 생성 메서드 (빌더를 활용)
+
     public static BoardFile createBoardFile(Board board, String filePath, String fileType, String fileName, Long fileSize, String fileDownloadUrl) {
         return BoardFile.builder()
                 .board(board)

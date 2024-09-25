@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 public class BoardPinReqDto {
     private Long userId;
-
     private Boolean isPinned;
 }

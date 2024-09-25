@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAll(Pageable pageable);
 
-    // 삭제되지 않은 항목만 반환
-    Page<Board> findByDelYn(DelYN delYN, Pageable pageable);
 
     // 제목을 기준으로 게시물을 검색하고 삭제되지 않은 항목만 반환
     Page<Board> findByTitleContainingIgnoreCase(String title, DelYN delYN, Pageable pageable);

@@ -27,16 +27,16 @@ public class BoardSaveReqDto {
     @Builder.Default
     private DelYN delYn = DelYN.N;
 
-    // 익명 게시글 여부에 따라 User를 null로 설정
+
     public Board toEntity(User user, Category category) {
         return Board.builder()
                 .title(this.title)
                 .content(this.content)
                 .category(category)
                 .delYn(this.delYn != null ? this.delYn : DelYN.N)
-                .user(this.isAnonymous ? null : user)  // 익명일 경우 user를 null로 설정
+                .user(this.isAnonymous ? null : user)
                 .isPinned(this.isPinned)
-                .isAnonymous(this.isAnonymous)  // 익명 여부 설정
+                .isAnonymous(this.isAnonymous)
                 .build();
     }
 }

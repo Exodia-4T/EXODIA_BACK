@@ -40,9 +40,9 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = false)
     private int hits = 0;
 
-    // 작성자 정보 (익명 게시글의 경우 null)
+    // 작성자 정보 (익명 게시글의 경우 null, 수정 필요)
     @ManyToOne
-    @JoinColumn(name = "user_num", nullable = true)  // 익명 게시글일 경우 null을 허용
+    @JoinColumn(name = "user_num", nullable = true)
     private User user;
 
     // 익명 여부 필드 추가
@@ -63,7 +63,7 @@ public class Board extends BaseTimeEntity {
     @Column(name = "is_pinned", nullable = false)
     private Boolean isPinned = false;
 
-    // 게시물 목록 DTO로 변환 (익명 여부에 따라 처리)
+    // 게시물 목록 DTO로 변환
     public BoardListResDto listFromEntity() {
         return BoardListResDto.builder()
                 .id(this.id)
@@ -77,7 +77,7 @@ public class Board extends BaseTimeEntity {
                 .build();
     }
 
-    // 게시물 상세 DTO로 변환 (익명 여부에 따라 처리)
+    // 게시물 상세 DTO로 변환
     public BoardDetailDto detailFromEntity(List<String> filePaths) {
         return BoardDetailDto.builder()
                 .id(this.getId())

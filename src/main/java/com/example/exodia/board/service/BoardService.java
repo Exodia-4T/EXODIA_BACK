@@ -64,7 +64,6 @@ public class BoardService {
                 throw new SecurityException("공지사항 또는 경조사 게시물은 인사팀만 작성할 수 있습니다.");
             }
         }
-        System.out.println(user.getDepartment().getName());
 
         // BoardSaveReqDto에서 엔티티 변환
         Board board = dto.toEntity(user, category);
