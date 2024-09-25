@@ -94,5 +94,4 @@ public class UserController {
             return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED, e.getMessage()), HttpStatus.UNAUTHORIZED);
         }
     }
-
 }

@@ -136,5 +136,16 @@ public class User extends BaseTimeEntity {
     public void softDelete() {
         super.softDelete();
     }
+
+
+//    test코드
+    public void setUserNum(String userNum) {
+        this.userNum = userNum;
+    }
+
+    public User(String userNum) {
+        this.userNum = userNum;
+    }
+
 }
 
