@@ -18,6 +18,8 @@ import javax.persistence.*;
 @Where(clause = "del_yn = 'N'")
 public class ChatUser extends BaseTimeEntity {
 
+    // 채팅유저 : 채팅방과 유저 id 포함
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 채팅유저고유의 id

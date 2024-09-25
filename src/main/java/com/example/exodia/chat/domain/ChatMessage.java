@@ -17,19 +17,17 @@ import javax.persistence.*;
 @Where(clause = "del_yn = 'N'")
 public class ChatMessage extends BaseTimeEntity {
 
+    // 채팅메세지 : 채팅방id와 유저id를 포함한 채팅유저를 가진다.
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 채팅메세지고유의 id
 
     //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @ManyToOne
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom; // 어느 채팅방인지
-
-    //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @ManyToOne
     @JoinColumn(name = "chat_user_id", nullable = false)
-    private ChatUser chatUser; // 그 방의 누가 보냈는지 (이 안에 채팅방번호가 있는데 채팅방은 없어도 되지 않을까..)
+    private ChatUser chatUser; // 누가 보냈는지 chatroom도 알 수 있다.
 
-    private String content;
+    private String message;
+
 }
