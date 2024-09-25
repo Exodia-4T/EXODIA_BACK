@@ -24,7 +24,7 @@ public class ChatFile extends BaseTimeEntity {
 //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name = "chat_user_id", nullable = false)
-    private ChatUser chatUser; // 누가 보냈는지
+    private ChatUser chatUser; // 누가 보냈는지  // 채팅룸 정보도 함께 갖는다.
 
     @OneToOne
     @JoinColumn(name = "chat_message_id", nullable = false)
