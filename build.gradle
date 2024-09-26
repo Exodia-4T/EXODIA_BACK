@@ -32,6 +32,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-spring-boot-starter:3.17.7'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.5'
+	implementation 'org.springframework.boot:spring-boot-starter-json'
+
 
 	// Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -91,6 +94,8 @@ dependencies {
 	// Kurento Client
 	implementation 'org.kurento:kurento-client:6.16.0'
 
+	//shedLock
+	implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.8.0")
 }
 
 

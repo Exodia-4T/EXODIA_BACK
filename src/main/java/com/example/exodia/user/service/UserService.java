@@ -85,7 +85,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    private void checkHrAuthority(String departmentName) {
+    public void checkHrAuthority(String departmentName) {
         if (!"1".equals(departmentName)) {
             throw new RuntimeException("권한이 없습니다. 관리자만 수행할 수 있습니다.");
         }

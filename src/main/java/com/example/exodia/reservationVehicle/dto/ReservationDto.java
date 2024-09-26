@@ -1,9 +1,7 @@
-package com.example.exodia.reservation.dto;
+package com.example.exodia.reservationVehicle.dto;
 
-import com.example.exodia.car.domain.Car;
-import com.example.exodia.reservation.domain.Reservation;
-import com.example.exodia.reservation.domain.Status;
-import com.example.exodia.user.domain.User;
+import com.example.exodia.reservationVehicle.domain.Reservation;
+import com.example.exodia.reservationVehicle.domain.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
