@@ -31,7 +31,7 @@ public class SubmitSaveReqDto {
 	@Builder
 	public static class SubmitUserDto {
 		private String userName;
-		private String position;
+		private Long position;
 	}
 
 

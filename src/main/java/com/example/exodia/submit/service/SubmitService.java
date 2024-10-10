@@ -60,8 +60,9 @@ public class SubmitService {
 		Submit submit = dto.toEntity(submitUser);
 		SubmitLine submitLine = SubmitLine.builder().build();
 
+		// 결재라인
 		for (SubmitSaveReqDto.SubmitUserDto userDto : dto.getSubmitUserDtos()) {
-			Position position = positionRepository.findByName(userDto.getPosition())
+			Position position = positionRepository.findById(userDto.getPosition())
 				.orElseThrow(() -> new EntityNotFoundException("직급 정보가 존재하지 않습니다."));
 
 			User user = userRepository.findByNameAndPosition(userDto.getUserName(), position)
