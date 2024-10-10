@@ -2,6 +2,8 @@ package com.example.exodia.document.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +18,7 @@ public interface DocumentRepository extends JpaRepository<Document,Long> {
 	// Document findByDocumentP_Id(Long documentPId);
 	List<Document> findAllByDocumentVersion(DocumentVersion documentVersion);
 	List<Document> findAllByDocumentTypeAndStatus(DocumentType documentType, String status);
-	List<Document> findAllByStatus(String status);
+	Page<Document> findAllByStatus(String status, Pageable pageable);
 	List<Document> findByDocumentVersionAndIdGreaterThan(DocumentVersion documentVersion, Long id);
 	List<Document> findAllByIdAndStatus(Long id, String status);
 

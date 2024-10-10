@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,8 +68,10 @@ public class DocumentController {
 
 	// 	전체 문서 조회
 	@GetMapping("/list/all")
-	public ResponseEntity<?> docList() {
-		List<DocListResDto> docListResDtos = documentService.getDocList();
+	public ResponseEntity<?> docList(
+		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+		) {
+		Page<DocListResDto> docListResDtos = documentService.getDocList(pageable);
 		return ResponseEntity.ok(new CommonResDto(HttpStatus.OK, "전체 문서 조회 성공", docListResDtos));
 	}
 

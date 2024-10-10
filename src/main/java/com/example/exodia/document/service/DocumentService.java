@@ -5,12 +5,15 @@ import java.nio.file.NoSuchFileException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.exodia.common.service.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -131,18 +134,19 @@ public class DocumentService {
 	}
 
 	// 	전체 문서 조회
-	public List<DocListResDto> getDocList() {
+	public Page<DocListResDto> getDocList(Pageable pageable) {
 		// 생성시간 == 수정시간 doc만 조회 -> 수정되지 않은 모든 데이터
 		String userNum = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepository.findByUserNum(userNum)
 			.orElseThrow(() -> new RuntimeException("존재하지 않는 사원입니다"));
 
-		List<Document> docs = documentRepository.findAllByStatus("now");
-		List<DocListResDto> docListResDtos = new ArrayList<>();
-		for (Document doc : docs) {
-			docListResDtos.add(doc.fromEntityList());
-		}
-		return docListResDtos;
+		Page<Document> docs = documentRepository.findAllByStatus("now", pageable);
+		// Page<DocListResDto> docListResDtos = new ArrayList<>();
+		// for (Document doc : docs) {
+		// 	docListResDtos.add(doc.fromEntityList());
+		// }
+		// return docListResDtos;
+		return docs.map(Document::fromEntityList);
 	}
 
 	// 최근 열람 문서 조회
