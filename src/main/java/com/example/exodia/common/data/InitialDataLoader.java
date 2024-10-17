@@ -20,8 +20,6 @@ import com.example.exodia.meetingRoom.repository.MeetingRoomRepository;
 import com.example.exodia.position.domain.Position;
 import com.example.exodia.salary.domain.Salary;
 import com.example.exodia.salary.repository.SalaryRepository;
-import com.example.exodia.submit.domain.SubmitType;
-import com.example.exodia.submit.repository.SubmitTypeRepository;
 import com.example.exodia.user.domain.User;
 import com.example.exodia.user.domain.Gender;
 import com.example.exodia.user.domain.Status;
@@ -48,7 +46,6 @@ public class InitialDataLoader implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final MeetingRoomRepository meetingRoomRepository;
     private final CarRepository carRepository;
-    private final SubmitTypeRepository submitTypeRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatUserRepository chatUserRepository;
     private final SalaryRepository salaryRepository;
@@ -70,7 +67,6 @@ public class InitialDataLoader implements CommandLineRunner {
                              ChatRoomRepository chatRoomRepository,
                              ChatUserRepository chatUserRepository,
                              CarRepository carRepository,
-                             SubmitTypeRepository submitTypeRepository,
                              SalaryRepository salaryRepository, TagRepository tagRepository) {  // Constructor에 추가
         this.departmentRepository = departmentRepository;
         this.positionRepository = positionRepository;
@@ -80,7 +76,6 @@ public class InitialDataLoader implements CommandLineRunner {
         this.passwordEncoder = passwordEncoder;
         this.meetingRoomRepository = meetingRoomRepository;
         this.carRepository = carRepository;
-        this.submitTypeRepository = submitTypeRepository;
         this.chatRoomRepository = chatRoomRepository;
         this.chatUserRepository = chatUserRepository;
         this.salaryRepository = salaryRepository;  // 주입
@@ -279,10 +274,6 @@ public class InitialDataLoader implements CommandLineRunner {
         cars.add(new Car(null, "14라 8222", "소나타", 5, 2.0, "sonata.jpg"));
         cars.add(new Car(null, "18유3752", "황금마티즈", 4, 0.8, "matiz.jpg"));
         carRepository.saveAll(cars);
-      
-        submitTypeRepository.save(new SubmitType(1L, "법인 카드 사용 신청서"));
-        submitTypeRepository.save( new SubmitType(2L, "휴가 신청서"));
-        submitTypeRepository.save( new SubmitType(3L, "경조사 신청서"));
 
         ChatRoom chatRoom = ChatRoom.builder().roomName("test").build();
         chatRoomRepository.save(chatRoom);

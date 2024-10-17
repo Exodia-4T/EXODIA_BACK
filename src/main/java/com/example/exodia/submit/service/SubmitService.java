@@ -24,7 +24,6 @@ import com.example.exodia.submit.dto.SubmitSaveReqDto;
 import com.example.exodia.submit.dto.SubmitStatusUpdateDto;
 import com.example.exodia.submit.repository.SubmitLineRepository;
 import com.example.exodia.submit.repository.SubmitRepository;
-import com.example.exodia.submit.repository.SubmitTypeRepository;
 import com.example.exodia.user.domain.User;
 import com.example.exodia.user.repository.UserRepository;
 
@@ -38,19 +37,17 @@ public class SubmitService {
 	private final PositionRepository positionRepository;
 	private final SubmitLineRepository submitLineRepository;
 	private final KafkaProducer kafkaProducer;
-	private final SubmitTypeRepository submitTypeRepository;
 	private final DepartmentRepository departmentRepository;
 
 	public SubmitService(SubmitRepository submitRepository, UserRepository userRepository,
 		PositionRepository positionRepository, SubmitLineRepository submitLineRepository,
-		SubmitTypeRepository submitTypeRepository, KafkaProducer kafkaProducer,
+		KafkaProducer kafkaProducer,
 		DepartmentRepository departmentRepository) {
 		this.submitRepository = submitRepository;
 		this.userRepository = userRepository;
 		this.positionRepository = positionRepository;
 		this.submitLineRepository = submitLineRepository;
 		this.kafkaProducer = kafkaProducer;
-		this.submitTypeRepository = submitTypeRepository;
 		this.departmentRepository = departmentRepository;
 	}
 
@@ -150,14 +147,6 @@ public class SubmitService {
 		Submit submit = submitRepository.findById(submitId)
 			.orElseThrow(() -> new EntityNotFoundException("결재 정보가 존재하지 않습니다."));
 		submit.updateStatus(SubmitStatus.REJECT, reason);
-	}
-
-	// 결재 타입 리스트 전체 조회
-	public List<?> getTypeList() {
-		List<SubmitType> types = submitTypeRepository.findAll();
-		return types.stream()
-			.map(SubmitType::getTypeName)
-			.collect(Collectors.toList());
 	}
 
 	// 나에게 요청 들어온 결재 리스트 조회

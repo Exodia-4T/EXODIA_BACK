@@ -18,13 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.exodia.common.dto.CommonErrorDto;
 import com.example.exodia.common.dto.CommonResDto;
-import com.example.exodia.document.dto.DocDetailResDto;
 import com.example.exodia.submit.domain.Submit;
 import com.example.exodia.submit.domain.SubmitLine;
 import com.example.exodia.submit.dto.SubmitDetResDto;
 import com.example.exodia.submit.dto.SubmitSaveReqDto;
 import com.example.exodia.submit.dto.SubmitStatusUpdateDto;
-import com.example.exodia.submit.repository.SubmitTypeRepository;
 import com.example.exodia.submit.service.SubmitService;
 
 @RestController
@@ -64,13 +62,6 @@ public class SubmitController {
 			return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
 
 		}
-	}
-
-	// 결재 타입 리스트 전체 조회
-	@GetMapping("/type/list")
-	public ResponseEntity<?> findAll() {
-		List<?> submitTypes = submitService.getTypeList();
-		return ResponseEntity.ok(new CommonResDto(HttpStatus.OK, "결재 타입 리스트 조회 성공", submitTypes));
 	}
 
 	// 나에게 요청 들어온 결재 리스트 조회
