@@ -23,5 +23,4 @@ public class QnAQtoUpdateDto {
     private LocalDateTime updatedAt;
     private Department department;
     private List<MultipartFile> files;
-    private Boolean anonymous;
 }

@@ -12,6 +12,7 @@ import com.example.exodia.department.repository.DepartmentRepository;
 import com.example.exodia.qna.domain.QnA;
 import com.example.exodia.qna.dto.*;
 //import com.example.exodia.qna.repository.ManagerRepository;
+import com.example.exodia.qna.repository.ManagerRepository;
 import com.example.exodia.qna.repository.QnARepository;
 import com.example.exodia.user.domain.User;
 import com.example.exodia.user.repository.UserRepository;
@@ -40,19 +41,20 @@ public class QnAService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final BoardFileRepository boardFileRepository;
-//    private final ManagerRepository managerRepository;
+    private final ManagerRepository managerRepository;
 
     @Autowired
     public QnAService(QnARepository qnARepository, CommentRepository commentRepository,
                       UploadAwsFileService uploadAwsFileService, UserRepository userRepository,
-                      DepartmentRepository departmentRepository, BoardFileRepository boardFileRepository ) {
+                      DepartmentRepository departmentRepository, BoardFileRepository boardFileRepository, ManagerRepository managerRepository) {
         this.qnARepository = qnARepository;
         this.commentRepository = commentRepository;
         this.uploadAwsFileService = uploadAwsFileService;
         this.userRepository = userRepository;
         this.boardFileRepository = boardFileRepository;
         this.departmentRepository = departmentRepository;
-//        this.managerRepository = managerRepository;
+
+        this.managerRepository = managerRepository;
     }
 
     @Transactional
@@ -150,11 +152,11 @@ public class QnAService {
         User answerer = userRepository.findByUserNum(userNum)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사번을 가진 유저가 없습니다."));
 
-        // 사용자가 매니저 테이블에 있는지 확인
-//        boolean isManager = managerRepository.existsByUser(answerer);
-//        if (!isManager) {
-//            throw new SecurityException("매니저만 질문에 답변할 권한이 있습니다.");
-//        }
+//         사용자가 매니저 테이블에 있는지 확인
+        boolean isManager = managerRepository.existsByUser(answerer);
+        if (!isManager) {
+            throw new SecurityException("매니저만 질문에 답변할 권한이 있습니다.");
+        }
 
         // 다른 부서의 질문에 답변할 수 있는지 체크
         if (!answerer.getDepartment().getId().equals(questionerDepartment.getId())) {

@@ -100,8 +100,6 @@ public class QnA extends BaseTimeEntity {
         this.title = dto.getTitle();
         this.questionText = dto.getQuestionText();
 
-        // 익명 여부 업데이트
-        this.anonymous = dto.getAnonymous();
 
         // 업데이트 시간을 현재 시간으로 설정
         this.setUpdatedAt(LocalDateTime.now());
