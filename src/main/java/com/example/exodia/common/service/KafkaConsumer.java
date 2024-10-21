@@ -69,6 +69,7 @@ public class KafkaConsumer {
         if ("document-events".equals(topic)) {
             processDocumentUpdateMessage(message);
         }
+        System.out.println("feat/test");
     }
 
     private void processDocumentUpdateMessage(String message) {
