@@ -14,7 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Service
+//@Service
+@Service("myKafkaConsumer")
 public class SseEmitters {
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
@@ -27,12 +28,12 @@ public class SseEmitters {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                emitter.send(SseEmitter.event().comment("heartbeat"));
+                emitter.send(SseEmitter.event().comment("heartbeat"));  // 주기적으로 heartbeat 전송
             } catch (IOException e) {
                 emitters.remove(userNum);
                 System.out.println("SSE 연결 오류 발생: " + userNum);
             }
-        }, 0, 30, TimeUnit.SECONDS);
+        }, 0, 10, TimeUnit.SECONDS);
 
         // SSE 종료/에러 -> 백업처리로직
         emitter.onCompletion(() -> emitters.remove(userNum));
@@ -42,9 +43,7 @@ public class SseEmitters {
         });
         emitter.onError(e -> {
             emitters.remove(userNum);
-            System.out.println("SSE 연결 오류 발생: " + userNum);
-            e.printStackTrace();
-        });
+            });
 
         return emitter;
     }
