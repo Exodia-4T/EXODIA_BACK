@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class SseEmitters {
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final int MAX_SSE_CONNECTIONS = 3;
 
     public SseEmitter addEmitter(String userNum) {
         SseEmitter emitter = new SseEmitter(600_000L);

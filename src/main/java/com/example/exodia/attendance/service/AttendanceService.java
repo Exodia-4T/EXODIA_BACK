@@ -268,6 +268,4 @@ public class AttendanceService {
 
         return attendanceStatusMap;
     }
-
-
 }
